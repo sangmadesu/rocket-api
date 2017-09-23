@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_pymongo import PyMongo
 
 
@@ -8,6 +8,12 @@ app.config['MONGO_DBNAME'] = 'rocket-api'
 app.config['MONGO_URI'] = 'mongodb://admin:admin123@ds147964.mlab.com:47964/rocket-api'
 
 mongo = PyMongo(app)
+
+
+# Error Handler
+# @app.errorhandler(500)
+# def catch_server_error(e):
+#     return jsonify({"info":"Something went wrong!"})
 
 
 # READ
@@ -22,6 +28,7 @@ def viewProducts():
 
     return jsonify(Products = output)
 
+
 # CREATE
 @app.route('/products', methods=['GET','POST'])
 def addProducts():
@@ -30,15 +37,24 @@ def addProducts():
     description = request.json['description']
     price = request.json['price']
     stock = request.json['stock']
-    insert_product = products.insert({'title':title, 'description':description, 'price':price, 'stock':stock})
-    print(insert_product)
 
-    return jsonify({"info": "Created product success!"})
+    try:
+        insert_product = products.insert({'title':title, 'description':description, 'price':price, 'stock':stock})
+        print(insert_product)
 
+        return jsonify({"info": "Created product success!"})
+    except Exception as e:
+        print(e)
+        return abort(500)
+        
+    
 
 # UPDATE
 
 # DELETE
+
+
+
 
 
 if __name__ == "__main__":
