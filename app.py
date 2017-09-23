@@ -22,13 +22,27 @@ def viewProducts():
 
     return jsonify(Products = output)
 
-# CREAD
+# CREATE
+@app.route('/products', methods=['GET','POST'])
+def addProducts():
+    products = mongo.db.products
+    title = request.json['title']
+    description = request.json['description']
+    price = request.json['price']
+    stock = request.json['stock']
+    insert_product = products.insert({'title':title, 'description':description, 'price':price, 'stock':stock})
+    print(insert_product)
+
+    return jsonify({"info": "Created product success!"})
+
 
 # UPDATE
 
 # DELETE
 
 
-app.run(debug=True, host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
 
 
