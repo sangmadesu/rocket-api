@@ -61,15 +61,27 @@ def viewProduct(id):
 
         return jsonify(output)
     except Exception as e:
-        raise e
         print(e)
 
         return abort(500)
 
 
 # UPDATE
+@app.route('/products/<id>', methods=['PUT'])
+def updateProduct(id):
+    products = mongo.db.products
+    data = request.get_json()
+    try:
+        update = products.update({'_id': ObjectId(id)}, { "$set": data})
+
+        return jsonify({"info": "Product Updated Successfully"})
+    except Exception as e:
+        print(e)
+
+        return abort(500)
 
 # DELETE
+
 
 
 if __name__ == "__main__":
