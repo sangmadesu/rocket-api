@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, abort
 from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
 
 
 app = Flask(__name__)
@@ -16,21 +17,8 @@ mongo = PyMongo(app)
 #     return jsonify({"info":"Something went wrong!"})
 
 
-# READ
-@app.route('/products')
-def viewProducts():
-    products = mongo.db.products
-    output = []
-
-    for product in products.find():
-        _id = str(product.get('_id'))
-        output.append({'id':_id, 'title':product['title'], 'description':product['description'], 'price':product['price'], 'stock':product['stock']})
-
-    return jsonify(Products = output)
-
-
 # CREATE
-@app.route('/products', methods=['GET','POST'])
+@app.route('/products', methods=['POST'])
 def addProducts():
     products = mongo.db.products
     title = request.json['title']
@@ -45,16 +33,43 @@ def addProducts():
         return jsonify({"info": "Created product success!"})
     except Exception as e:
         print(e)
-        return abort(500)
         
-    
+        return abort(500)
+
+
+# READ
+@app.route('/products')
+def viewAllProducts():
+    products = mongo.db.products
+    output = []
+
+    for product in products.find():
+        _id = str(product.get('_id'))
+        output.append({'id':_id, 'title':product['title'], 'description':product['description'], 'price':product['price'], 'stock':product['stock']})
+
+    return jsonify(output)
+
+        
+# VIEW
+@app.route('/products/<id>')
+def viewProduct(id):
+    print(id)
+    products = mongo.db.products
+    try:
+        product = products.find_one({'_id':ObjectId(id)})
+        output = {'_id':str(product.get('_id')), 'title':product.get('title'), 'description':product.get('description'), 'price':product.get('stock')}
+
+        return jsonify(output)
+    except Exception as e:
+        raise e
+        print(e)
+
+        return abort(500)
+
 
 # UPDATE
 
 # DELETE
-
-
-
 
 
 if __name__ == "__main__":
