@@ -28,7 +28,7 @@ def addProducts():
 
     try:
         insert_product = products.insert({'title':title, 'description':description, 'price':price, 'stock':stock})
-        print(insert_product)
+        # print(insert_product)
 
         return jsonify({"info": "Created product success!"})
     except Exception as e:
@@ -72,7 +72,7 @@ def updateProduct(id):
     products = mongo.db.products
     data = request.get_json()
     try:
-        update = products.update({'_id': ObjectId(id)}, { "$set": data})
+        products.update({'_id': ObjectId(id)}, { "$set": data})
 
         return jsonify({"info": "Product Updated Successfully"})
     except Exception as e:
@@ -80,8 +80,21 @@ def updateProduct(id):
 
         return abort(500)
 
-# DELETE
 
+# DELETE
+@app.route('/products/delete/<id>', methods=['DELETE'])
+def deleteProduct(id):
+    products = mongo.db.products
+    # print(id)
+    try:
+        # pass
+        products.remove({'_id': ObjectId(id)})
+
+        return jsonify({"info": "Product Deleted Successfully"})
+    except Exception as e:
+        pritn(e)
+
+        return abort(500)
 
 
 if __name__ == "__main__":
