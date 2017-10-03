@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify, abort
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from config import dbName, dbUrl
 
 
 app = Flask(__name__)
 
-app.config['MONGO_DBNAME'] = 'rocket-api'
-app.config['MONGO_URI'] = 'mongodb://admin:admin123@ds147964.mlab.com:47964/rocket-api'
+app.config['MONGO_DBNAME'] = dbName
+app.config['MONGO_URI'] = dbUrl
 
 mongo = PyMongo(app)
 
@@ -33,7 +34,7 @@ def addProducts():
         return jsonify({"info": "Created product success!"})
     except Exception as e:
         print(e)
-        
+
         return abort(500)
 
 
@@ -49,7 +50,7 @@ def viewAllProducts():
 
     return jsonify(output)
 
-        
+
 # VIEW
 @app.route('/products/<id>')
 def viewProduct(id):
